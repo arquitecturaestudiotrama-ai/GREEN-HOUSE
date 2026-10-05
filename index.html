@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Green House | DFS Studio</title>
+<meta name="description" content="Green House, Costa Esmeralda, Pinamar. Proyecto de DFS Studio Arq & Design.">
+<meta property="og:title" content="Green House | DFS Studio">
+<meta property="og:description" content="Costa Esmeralda, Pinamar. Proyecto de DFS Studio Arq & Design.">
+<meta property="og:image" content="img/comedor_living.jpg">
+<meta name="theme-color" content="#090909">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;700&family=Josefin+Sans:wght@700&family=Urbanist:wght@400;700&display=swap">
+<style>
+/* Mismo lenguaje que dfsestudio.com.ar: fondo grafito, títulos Bitter en mayúscula, subtítulos Josefin Sans, texto Urbanist */
+:root{
+  --bg:#1B1B1B;
+  --nav:#090909;
+  --negro:#000000;
+  --blanco:#FFFFFF;
+  --texto:#C2C9D4;
+  --gris:#A8AAAD;
+  --tag-bg:#202122;
+  --tag:#D0D1D2;
+  --linea:#2C2D2F;
+  --titulo:'Bitter', Georgia, serif;
+  --sub:'Josefin Sans', 'Helvetica Neue', Arial, sans-serif;
+  --cuerpo:'Urbanist', 'Helvetica Neue', Arial, sans-serif;
+  --sistema:system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--bg)}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--blanco);font-family:var(--sistema);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:inherit}
+[hidden]{display:none!important}
+.contenedor{max-width:1140px;margin:0 auto;padding-inline:16px}
+
+/* Barra superior */
+.nav{position:sticky;top:0;z-index:10;background:var(--nav);padding-top:env(safe-area-inset-top,0px)}
+.nav .contenedor{display:flex;align-items:center;justify-content:space-between;gap:16px;height:64px}
+.nav .logo-icono{height:34px;width:auto}
+.nav .logo-letras{height:34px;width:auto}
+.nav ul{display:none;list-style:none;margin:0;padding:0;gap:28px}
+.nav ul a{font-family:var(--cuerpo);font-weight:700;font-size:17px;text-decoration:none}
+.nav ul a:hover{color:var(--gris)}
+@media (min-width:900px){
+  .nav .contenedor{height:84px}
+  .nav ul{display:flex}
+  .nav .logo-icono,.nav .logo-letras{height:42px}
+}
+
+/* Migas */
+.migas{padding-block:28px 20px;font-family:var(--cuerpo);font-size:16px;color:var(--blanco)}
+.migas a{text-decoration:none}
+.migas a:hover{color:var(--gris)}
+.migas span{color:var(--gris)}
+
+/* Galería */
+.galeria{position:relative;max-width:1140px;margin:0 auto}
+.carril{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.carril::-webkit-scrollbar{display:none}
+.carril button{flex:0 0 100%;scroll-snap-align:center;padding:0;border:0;background:var(--negro);cursor:zoom-in}
+.carril img{width:100%;aspect-ratio:16/9;object-fit:cover}
+.flecha{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border:0;background:none;color:var(--blanco);cursor:pointer;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 1px 3px rgba(0,0,0,.6))}
+.flecha svg{width:30px;height:30px}
+.flecha.izq{left:4px}.flecha.der{right:4px}
+.contador{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);margin:0;font-family:var(--cuerpo);font-weight:700;font-size:14px;letter-spacing:1px;text-shadow:0 1px 3px rgba(0,0,0,.7);font-variant-numeric:tabular-nums;pointer-events:none}
+.miniaturas{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:10px 16px 0;max-width:1140px;margin:0 auto}
+.miniaturas::-webkit-scrollbar{display:none}
+.miniaturas button{flex:0 0 auto;width:110px;padding:0;border:2px solid transparent;background:none;cursor:pointer;opacity:.55;transition:opacity .2s}
+.miniaturas button[aria-current="true"]{opacity:1;border-color:var(--blanco)}
+.miniaturas img{width:100%;aspect-ratio:16/10;object-fit:cover}
+@media (min-width:900px){.miniaturas{padding-inline:0}.miniaturas button{width:150px}}
+
+/* Ficha */
+.ficha{display:flex;flex-direction:column;gap:36px;padding-block:36px 24px}
+h1{margin:0;text-align:center;font-family:var(--titulo);font-weight:700;font-size:32px;text-transform:uppercase;text-wrap:balance}
+.info{display:grid;gap:28px}
+@media (min-width:768px){.info{grid-template-columns:1fr 1fr}}
+.info strong{display:block;margin-bottom:12px;font-size:20.8px;font-weight:700;text-transform:uppercase}
+.info ul{list-style:none;margin:0;padding:0}
+.lista-tags{display:flex;flex-wrap:wrap;gap:8px}
+.lista-tags li{background:var(--tag-bg);color:var(--tag);padding:6px 14px}
+.bloque{display:flex;flex-direction:column;gap:16px;scroll-margin-top:96px}
+h2{margin:0;font-family:var(--sub);font-weight:700;font-size:27px;text-transform:uppercase;line-height:1.2}
+.sobre p{margin:0;font-family:var(--cuerpo);font-size:17.6px;line-height:1.7;color:var(--texto);max-width:68ch}
+
+/* 360 */
+.pano-tabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-inline:-16px;padding-inline:16px}
+.pano-tabs::-webkit-scrollbar{display:none}
+.pano-tabs button{flex:none;padding:8px 16px;border:0;background:var(--tag-bg);color:var(--tag);font:inherit;font-size:15px;cursor:pointer}
+.pano-tabs button[aria-selected="true"]{background:var(--blanco);color:var(--nav)}
+.pano{position:relative;width:100%;max-width:100%;aspect-ratio:4/3;background:var(--negro);overflow:hidden;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+@media (min-width:900px){.pano{aspect-ratio:16/9}}
+.pano.arrastrando{cursor:grabbing}
+.pano canvas{display:block;width:100%;height:100%}
+.pano-ayuda{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);margin:0;padding:8px 16px;background:rgba(9,9,9,.75);color:var(--blanco);font-family:var(--cuerpo);font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase;pointer-events:none;transition:opacity .4s;white-space:nowrap}
+.pano-ayuda.oculta{opacity:0}
+.pano-botones{position:absolute;right:10px;bottom:10px;display:flex;gap:6px}
+.pano-botones button{background:rgba(9,9,9,.75);color:var(--blanco);border:1px solid rgba(255,255,255,.25);font:inherit;font-size:14px;min-width:38px;height:38px;padding:0 12px;cursor:pointer}
+.pano.full{position:fixed;inset:0;z-index:30;aspect-ratio:auto;width:100%;height:100%;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.pano.full .pano-botones{bottom:calc(14px + env(safe-area-inset-bottom,0px));right:14px}
+.pano-plano{width:100%;height:100%;overflow-x:auto}
+.pano-plano img{height:100%;width:auto;max-width:none}
+.nota{margin:0;font-family:var(--cuerpo);font-size:15px;color:var(--gris)}
+
+/* Ubicación */
+.ubicacion h2{font-family:var(--titulo);font-weight:600;font-size:35px}
+address{font-style:normal;color:var(--gris)}
+
+/* Footer */
+footer{margin-top:56px;background:var(--negro);color:rgba(255,255,255,.5);padding-block:48px calc(32px + env(safe-area-inset-bottom,0px))}
+footer .contenedor{display:flex;flex-wrap:wrap;gap:40px 72px;align-items:flex-start}
+footer .logo-pie{width:90px}
+.col{display:flex;flex-direction:column;gap:8px;min-width:0}
+.col h3{margin:0 0 6px;color:var(--blanco);font-family:var(--cuerpo);font-weight:700;font-size:18px;text-transform:uppercase}
+.col a{text-decoration:none}
+.col a:hover{color:var(--blanco)}
+
+/* Visor de fotos */
+.visor{position:fixed;inset:0;z-index:40;background:var(--nav);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.visor .barra{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px}
+.visor .num{font-family:var(--cuerpo);font-weight:700;font-size:14px;font-variant-numeric:tabular-nums}
+.visor button{background:var(--tag-bg);color:var(--blanco);border:0;font:inherit;font-size:15px;padding:9px 16px;cursor:pointer}
+.visor .lienzo{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:auto;touch-action:pan-x pan-y pinch-zoom}
+.visor .lienzo img{max-width:100%;max-height:100%;object-fit:contain}
+.visor .pie{display:flex;justify-content:space-between;padding:12px 16px}
+
+button:focus-visible,a:focus-visible,canvas:focus-visible{outline:2px solid var(--blanco);outline-offset:2px}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="contenedor">
+    <a href="https://dfsestudio.com.ar/" aria-label="DFS Studio, inicio"><img class="logo-icono" src="img/logo-dfs.svg" alt="DFS Studio"></a>
+    <ul>
+      <li><a href="https://dfsestudio.com.ar/">Home</a></li>
+      <li><a href="https://dfsestudio.com.ar/projects">Projects</a></li>
+      <li><a href="https://dfsestudio.com.ar/about">About Us</a></li>
+      <li><a href="https://dfsestudio.com.ar/contact-us">Contact Us</a></li>
+    </ul>
+    <a href="https://dfsestudio.com.ar/" aria-label="DFS Studio, Arq &amp; Design"><img class="logo-letras" src="img/logo-dfs-letras.svg" alt="DFS Studio Arq &amp; Design"></a>
+  </div>
+</header>
+
+<main>
+  <nav class="contenedor migas" aria-label="Ruta">
+    <a href="https://dfsestudio.com.ar/">Home</a> / <a href="https://dfsestudio.com.ar/projects">Projects</a> / <span>GREEN HOUSE</span>
+  </nav>
+
+  <section class="galeria" aria-label="Imágenes del proyecto">
+    <div class="carril" id="carril">
+      <button type="button"><img src="img/comedor_living.jpg" alt="Comedor con mesa de madera maciza y living al fondo"></button>
+      <button type="button"><img src="img/living_galeria.jpg" alt="Living abierto al comedor, la cocina y la galería" loading="lazy"></button>
+      <button type="button"><img src="img/living_acceso.jpg" alt="Living con mesa ratona de madera y parasol de listones hacia el acceso" loading="lazy"></button>
+      <button type="button"><img src="img/estar_tv.jpg" alt="Estar con muro de placas símil cemento y mueble flotante de madera" loading="lazy"></button>
+      <button type="button"><img src="img/comedor_listones.jpg" alt="Comedor junto al parasol de listones de madera" loading="lazy"></button>
+      <button type="button"><img src="img/cocina.jpg" alt="Cocina grafito y madera con isla de listones iluminada" loading="lazy"></button>
+      <button type="button"><img src="img/dorm_cama.jpg" alt="Dormitorio principal con ventanal hacia la pileta" loading="lazy"></button>
+      <button type="button"><img src="img/dorm_pasillo.jpg" alt="Dormitorio y circulación hacia una ventana vertical" loading="lazy"></button>
+      <button type="button"><img src="img/dorm_tv.jpg" alt="Dormitorio con mueble blanco flotante y puerta de madera" loading="lazy"></button>
+    </div>
+    <button class="flecha izq" type="button" id="prev" aria-label="Imagen anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 4 7 12l8 8"/></svg></button>
+    <button class="flecha der" type="button" id="next" aria-label="Imagen siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m9 4 8 8-8 8"/></svg></button>
+    <p class="contador" id="contador">1 / 9</p>
+  </section>
+  <div class="miniaturas" id="miniaturas" aria-label="Miniaturas"></div>
+
+  <div class="contenedor ficha">
+    <h1>Green House</h1>
+
+    <div class="info">
+      <div>
+        <strong>Details</strong>
+        <ul>
+          <li>Costa Esmeralda, Pinamar</li>
+          <!-- Para mostrar la superficie, borrá los signos de comentario de la línea siguiente y completá el número -->
+          <!-- <li>Area: 000m²</li> -->
+        </ul>
+      </div>
+      <div>
+        <strong>Tags</strong>
+        <ul class="lista-tags">
+          <li>Costa esmeralda</li>
+          <li>Pinamar</li>
+          <li>Madera</li>
+          <li>Acero corten</li>
+        </ul>
+      </div>
+    </div>
+
+    <section class="bloque sobre">
+      <h2>Sobre el proyecto</h2>
+      <p>En Costa Esmeralda, Green House se abre al jardín y al verde que la rodea, con una arquitectura cálida, luminosa y en contacto permanente con el exterior. Hacia la calle, la casa presenta un frente sólido: el garaje se cierra con un portón de acero corten, cuya textura y tono óxido dialogan con la madera presente en toda la obra. El ingreso se filtra a través de un parasol de listones de madera que separa el acceso del área social sin cortar la luz. En planta baja, living, comedor y cocina se integran en un único ambiente que se extiende hacia la galería y la pileta mediante grandes carpinterías de piso a techo. La cocina, en tonos grafito y madera, se organiza en torno a una isla de listones iluminada, mientras que el estar se define con un muro de placas símil cemento y estantes con luz cálida. Una escalera conduce al sector privado, donde el dormitorio principal se vuelca hacia la pileta y el jardín. Green House propone una arquitectura serena y contemporánea, donde la madera, la luz y el paisaje construyen cada espacio.</p>
+    </section>
+
+    <section class="bloque" id="recorrido">
+      <h2>Recorrido 360°</h2>
+      <div class="pano-tabs" id="panoTabs" role="tablist" aria-label="Ambientes"></div>
+      <div class="pano" id="pano">
+        <canvas id="panoCanvas" aria-label="Vista 360 del interior. Arrastrá para mirar alrededor."></canvas>
+        <p class="pano-ayuda" id="panoAyuda">Cargando…</p>
+        <div class="pano-botones" id="panoBotones">
+          <button type="button" id="panoMenos" aria-label="Alejar">−</button>
+          <button type="button" id="panoMas" aria-label="Acercar">+</button>
+          <button type="button" id="panoFull">Pantalla completa</button>
+        </div>
+      </div>
+      <p class="nota">Deslizá para girar la vista y pellizcá para acercar.</p>
+    </section>
+
+    <section class="bloque ubicacion">
+      <h2>Location</h2>
+      <address>Costa Esmeralda, Pinamar</address>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="contenedor">
+    <img class="logo-pie" src="img/logo-dfs.svg" alt="DFS Studio">
+    <div class="col">
+      <h3>Home</h3>
+      <a href="#">Back to top.</a>
+      <a href="https://dfsestudio.com.ar/projects">Projects</a>
+      <a href="https://dfsestudio.com.ar/about">About Us.</a>
+      <a href="https://dfsestudio.com.ar/contact-us">Contact Us.</a>
+    </div>
+    <div class="col">
+      <h3>Information</h3>
+      <span>D: +54 9 11 22622946</span>
+      <span>F: +54 2494 4495185</span>
+      <span>S: +54 2494 542449</span>
+      <span>arqestudiodfs@gmail.com</span>
+      <span>Avellaneda 2325, CP 7600<br>Mar del Plata, Argentina</span>
+    </div>
+  </div>
+</footer>
+
+<div class="visor" id="visor" hidden role="dialog" aria-modal="true" aria-label="Imagen en pantalla completa">
+  <div class="barra"><span class="num" id="vnum"></span><button type="button" id="cerrar">Cerrar</button></div>
+  <div class="lienzo" id="lienzo"><img id="vimg" alt=""></div>
+  <div class="pie"><button type="button" id="vant">Anterior</button><button type="button" id="vsig">Siguiente</button></div>
+</div>
+
+<script>
+/* Galería con miniaturas y visor a pantalla completa */
+(function(){
+  var carril=document.getElementById('carril');
+  var slides=[].slice.call(carril.children);
+  var total=slides.length,actual=0;
+  var cont=document.getElementById('contador'),minis=document.getElementById('miniaturas');
+  slides.forEach(function(s,n){
+    var b=document.createElement('button');b.type='button';
+    b.setAttribute('aria-label','Ver imagen '+(n+1));
+    var im=document.createElement('img');im.src=s.querySelector('img').getAttribute('src');im.alt='';im.loading='lazy';
+    b.appendChild(im);b.addEventListener('click',function(){ir(n)});minis.appendChild(b);
+  });
+  function marcar(n){
+    actual=n;cont.textContent=(n+1)+' / '+total;
+    [].forEach.call(minis.children,function(b,k){b.setAttribute('aria-current',k===n?'true':'false')});
+    var m=minis.children[n];minis.scrollTo({left:m.offsetLeft-minis.clientWidth/2+m.clientWidth/2,behavior:'smooth'});
+  }
+  function ir(n){n=(n+total)%total;carril.scrollTo({left:slides[n].offsetLeft,behavior:'smooth'});marcar(n);}
+  document.getElementById('prev').addEventListener('click',function(){ir(actual-1)});
+  document.getElementById('next').addEventListener('click',function(){ir(actual+1)});
+  var t;carril.addEventListener('scroll',function(){clearTimeout(t);t=setTimeout(function(){
+    var n=Math.round(carril.scrollLeft/carril.clientWidth);if(n!==actual)marcar(Math.max(0,Math.min(total-1,n)));
+  },80)},{passive:true});
+  marcar(0);
+
+  var visor=document.getElementById('visor'),vimg=document.getElementById('vimg'),vnum=document.getElementById('vnum'),vi=0,origen=null;
+  function ver(n){vi=(n+total)%total;var im=slides[vi].querySelector('img');vimg.src=im.src;vimg.alt=im.alt;vnum.textContent=(vi+1)+' / '+total;}
+  function abrir(n){origen=slides[n];ver(n);visor.hidden=false;document.body.style.overflow='hidden';document.getElementById('cerrar').focus();}
+  function cerrar(){visor.hidden=true;document.body.style.overflow='';ir(vi);if(origen)origen.focus({preventScroll:true});}
+  slides.forEach(function(s,n){s.addEventListener('click',function(){abrir(n)})});
+  document.getElementById('cerrar').addEventListener('click',cerrar);
+  document.getElementById('vant').addEventListener('click',function(){ver(vi-1)});
+  document.getElementById('vsig').addEventListener('click',function(){ver(vi+1)});
+  document.addEventListener('keydown',function(e){
+    if(visor.hidden)return;
+    if(e.key==='Escape')cerrar();if(e.key==='ArrowRight')ver(vi+1);if(e.key==='ArrowLeft')ver(vi-1);
+  });
+  var x0=null,lienzo=document.getElementById('lienzo');
+  lienzo.addEventListener('touchstart',function(e){x0=e.touches.length===1?e.touches[0].clientX:null},{passive:true});
+  lienzo.addEventListener('touchend',function(e){
+    if(x0===null||(window.visualViewport&&window.visualViewport.scale>1.05))return;
+    var dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>50)ver(dx<0?vi+1:vi-1);x0=null;
+  });
+})();
+</script>
+
+<script>
+/* Recorrido 360: una vista por pestaña, cada imagen se descarga recién al elegirla */
+var PANOS=[
+  {nombre:'Living',src:'img/pano4.jpg'},
+  {nombre:'Comedor y cocina',src:'img/pano3.jpg'},
+  {nombre:'Ingreso y escalera',src:'img/pano5.jpg'},
+  {nombre:'Dormitorio',src:'img/pano2.jpg'},
+  {nombre:'Placares y pasillo',src:'img/pano1.jpg'}
+];
+(function(){
+  var pano=document.getElementById('pano'),canvas=document.getElementById('panoCanvas');
+  var ayuda=document.getElementById('panoAyuda'),btnFull=document.getElementById('panoFull');
+  var tabs=document.getElementById('panoTabs');
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var actual=-1,cache={},plano=null,U,tex;
+
+  PANOS.forEach(function(p,n){
+    var b=document.createElement('button');b.type='button';b.setAttribute('role','tab');b.textContent=p.nombre;
+    b.addEventListener('click',function(){elegir(n)});tabs.appendChild(b);
+  });
+
+  var gl=canvas.getContext('webgl',{antialias:false})||canvas.getContext('experimental-webgl');
+  function sinWebGL(){
+    canvas.remove();gl=null;
+    plano=document.createElement('div');plano.className='pano-plano';plano.appendChild(document.createElement('img'));
+    pano.insertBefore(plano,pano.firstChild);pano.style.touchAction='auto';
+    document.getElementById('panoBotones').hidden=true;
+  }
+  if(gl){
+    var vs='attribute vec2 p;varying vec2 v;void main(){v=p;gl_Position=vec4(p,0.,1.);}';
+    var fs='#ifdef GL_FRAGMENT_PRECISION_HIGH\nprecision highp float;\n#else\nprecision mediump float;\n#endif\n'+
+      'varying vec2 v;uniform sampler2D t;uniform float yaw,pitch,tf,asp;'+
+      'void main(){vec3 d=normalize(vec3(v.x*tf*asp,v.y*tf,-1.));'+
+      'float cp=cos(pitch),sp=sin(pitch);d=vec3(d.x,d.y*cp-d.z*sp,d.y*sp+d.z*cp);'+
+      'float cy=cos(yaw),sy=sin(yaw);d=vec3(d.x*cy-d.z*sy,d.y,d.x*sy+d.z*cy);'+
+      'float lon=atan(d.x,-d.z);float lat=asin(clamp(d.y,-1.,1.));'+
+      'gl_FragColor=texture2D(t,vec2(lon/6.2831853+.5,.5-lat/3.1415927));}';
+    var sh=function(tipo,src){var s=gl.createShader(tipo);gl.shaderSource(s,src);gl.compileShader(s);return s;};
+    var prog=gl.createProgram();gl.attachShader(prog,sh(gl.VERTEX_SHADER,vs));gl.attachShader(prog,sh(gl.FRAGMENT_SHADER,fs));gl.linkProgram(prog);
+    if(!gl.getProgramParameter(prog,gl.LINK_STATUS))sinWebGL();
+    else{
+      gl.useProgram(prog);
+      var buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+      gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+      var loc=gl.getAttribLocation(prog,'p');gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+      U={yaw:gl.getUniformLocation(prog,'yaw'),pitch:gl.getUniformLocation(prog,'pitch'),tf:gl.getUniformLocation(prog,'tf'),asp:gl.getUniformLocation(prog,'asp')};
+      tex=gl.createTexture();
+    }
+  }else sinWebGL();
+
+  var yaw=0,pitch=0,fov=75,listo=false,auto=!reduce,pendiente=false,FOVMIN=35,FOVMAX=100,R=Math.PI/180;
+
+  function subir(img){
+    var src=img,max=gl.getParameter(gl.MAX_TEXTURE_SIZE);
+    if(img.naturalWidth>max){var c=document.createElement('canvas');c.width=max;c.height=max/2;c.getContext('2d').drawImage(img,0,0,c.width,c.height);src=c;}
+    gl.bindTexture(gl.TEXTURE_2D,tex);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false);
+    gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,src);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+    listo=true;tamano();pedir();
+  }
+  function elegir(n){
+    if(n===actual)return;actual=n;
+    [].forEach.call(tabs.children,function(b,k){b.setAttribute('aria-selected',k===n?'true':'false')});
+    var nombre=PANOS[n].nombre;
+    yaw=0;pitch=0;fov=75;
+    if(!gl){var pi=plano.querySelector('img');pi.src=PANOS[n].src;pi.alt='Vista 360 de '+nombre;ayuda.textContent='Deslizá hacia los costados';return;}
+    canvas.setAttribute('aria-label','Vista 360 de '+nombre+'. Arrastrá para mirar alrededor.');
+    ayuda.textContent='Cargando…';ayuda.classList.remove('oculta');
+    var img=cache[n];
+    if(img&&img.complete&&img.naturalWidth){subir(img);ayuda.textContent='Arrastrá para mirar alrededor';return;}
+    img=cache[n]=new Image();
+    img.onload=function(){if(actual!==n)return;subir(img);ayuda.textContent='Arrastrá para mirar alrededor';};
+    img.onerror=function(){if(actual===n)ayuda.textContent='No se pudo cargar esta vista';};
+    img.src=PANOS[n].src;
+  }
+  function tamano(){
+    if(!gl)return;
+    var dpr=Math.min(window.devicePixelRatio||1,2);
+    var w=Math.max(1,Math.round(canvas.clientWidth*dpr)),h=Math.max(1,Math.round(canvas.clientHeight*dpr));
+    if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;}
+    gl.viewport(0,0,canvas.width,canvas.height);pedir();
+  }
+  function dibujar(){
+    pendiente=false;if(!listo||!gl)return;
+    if(auto){yaw+=0.0015;pedir();}
+    gl.uniform1f(U.yaw,yaw);gl.uniform1f(U.pitch,pitch);
+    gl.uniform1f(U.tf,Math.tan(fov*R/2));gl.uniform1f(U.asp,canvas.width/canvas.height);
+    gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+  }
+  function pedir(){if(!pendiente){pendiente=true;requestAnimationFrame(dibujar);}}
+
+  /* La primera vista se descarga cuando el recorrido está por aparecer en pantalla */
+  var arrancado=false;
+  function arrancar(){if(!arrancado){arrancado=true;elegir(0);}}
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){if(es[0].isIntersecting){arrancar();io.disconnect();}},{rootMargin:'600px 0px'});
+    io.observe(pano);
+  }else arrancar();
+  tabs.addEventListener('click',function(){arrancado=true;},true);
+  if(!gl)return;
+  if('ResizeObserver' in window)new ResizeObserver(tamano).observe(canvas);else window.addEventListener('resize',tamano);
+
+  function frenar(){auto=false;ayuda.classList.add('oculta');}
+  function zoom(f){fov=Math.max(FOVMIN,Math.min(FOVMAX,fov*f));pedir();}
+  var punteros={},distIni=0,fovIni=0;
+  pano.addEventListener('pointerdown',function(e){
+    if(e.target.closest('button'))return;
+    frenar();punteros[e.pointerId]={x:e.clientX,y:e.clientY};
+    try{pano.setPointerCapture(e.pointerId);}catch(_){}
+    pano.classList.add('arrastrando');
+    var ids=Object.keys(punteros);
+    if(ids.length===2){var a=punteros[ids[0]],b=punteros[ids[1]];distIni=Math.hypot(a.x-b.x,a.y-b.y);fovIni=fov;}
+  });
+  pano.addEventListener('pointermove',function(e){
+    var p=punteros[e.pointerId];if(!p)return;
+    var ids=Object.keys(punteros);
+    if(ids.length===1){
+      var k=fov*R/canvas.clientHeight;
+      yaw-=(e.clientX-p.x)*k;pitch+=(e.clientY-p.y)*k;
+      pitch=Math.max(-85*R,Math.min(85*R,pitch));pedir();
+    }
+    p.x=e.clientX;p.y=e.clientY;
+    if(ids.length===2&&distIni>0){
+      var a=punteros[ids[0]],b=punteros[ids[1]],d=Math.hypot(a.x-b.x,a.y-b.y);
+      fov=Math.max(FOVMIN,Math.min(FOVMAX,fovIni*distIni/d));pedir();
+    }
+  });
+  function soltar(e){delete punteros[e.pointerId];distIni=0;if(!Object.keys(punteros).length)pano.classList.remove('arrastrando');}
+  pano.addEventListener('pointerup',soltar);pano.addEventListener('pointercancel',soltar);
+  pano.addEventListener('wheel',function(e){
+    if(!pano.classList.contains('full')&&!e.ctrlKey)return;
+    e.preventDefault();frenar();zoom(e.deltaY>0?1.08:0.925);
+  },{passive:false});
+  document.getElementById('panoMas').addEventListener('click',function(){frenar();zoom(0.85);});
+  document.getElementById('panoMenos').addEventListener('click',function(){frenar();zoom(1.18);});
+  btnFull.addEventListener('click',function(){
+    var on=pano.classList.toggle('full');
+    btnFull.textContent=on?'Cerrar':'Pantalla completa';
+    document.body.style.overflow=on?'hidden':'';
+    tamano();
+  });
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&pano.classList.contains('full'))btnFull.click();});
+  canvas.tabIndex=0;
+  canvas.addEventListener('keydown',function(e){
+    var m={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,1],ArrowDown:[0,-1]}[e.key];
+    if(!m)return;e.preventDefault();frenar();
+    yaw+=m[0]*5*R;pitch=Math.max(-85*R,Math.min(85*R,pitch+m[1]*5*R));pedir();
+  });
+})();
+</script>
+</body>
+</html>
